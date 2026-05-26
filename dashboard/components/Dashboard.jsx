@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import ReportDownloadButtons from "./ReportDownloadButtons";
 
 const tabs = [
   { id: "part1", label: "탭 1", name: "파트 1 노선·역 현황" },
@@ -52,7 +53,7 @@ function Header({ selectedRoute, setSelectedRoute, routes }) {
   const date = now.toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" });
 
   return (
-    <header className="screen-statusbar grid grid-cols-[220px_1fr_260px] items-center px-8">
+    <header className="screen-statusbar grid grid-cols-[180px_1fr_auto_220px] items-center gap-4 px-8">
       <div className="flex items-center gap-2 text-xl">
         <button type="button" className="nav-icon-button" aria-label="뒤로">‹</button>
         <button type="button" className="nav-icon-button" aria-label="홈">⌂</button>
@@ -62,12 +63,13 @@ function Header({ selectedRoute, setSelectedRoute, routes }) {
         <div className="text-3xl font-semibold tabular-nums text-slate-700">{time}</div>
         <div className="mt-1 text-sm font-bold text-slate-500">{date}</div>
       </div>
+      <ReportDownloadButtons />
       <label className="justify-self-end text-xs font-semibold text-slate-500">
         <span className="mb-1 block text-right">Route</span>
         <select
           value={selectedRoute}
           onChange={(event) => setSelectedRoute(event.target.value)}
-          className="w-48 rounded-lg border border-slate-200 bg-white px-3 py-2 text-right text-base font-bold text-slate-700 outline-none focus:border-[#72ddb0]"
+          className="w-44 rounded-lg border border-slate-200 bg-white px-3 py-2 text-right text-base font-bold text-slate-700 outline-none focus:border-[#72ddb0]"
         >
           {["전체", ...routes].map((route) => (
             <option key={route} value={route}>
