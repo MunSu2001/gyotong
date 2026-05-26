@@ -41,6 +41,10 @@ outputs/reports/
 node_modules/
 .next/
 out/
+# 중복/캐시 파일
+data/processed/ktx_long_with_holiday.csv
+data/processed/holidays_cache.csv
+src/preprocess_catboost.py
 
 # ─── 로그 ──────────────────────────────────────────────
 *.log
