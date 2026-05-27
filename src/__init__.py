@@ -1,1 +1,1 @@
-"""VACANT source package."""
+"""VACANT — KTX vacancy analytics package."""

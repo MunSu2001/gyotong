@@ -214,6 +214,28 @@
           <button id="tabBtnD" class="tab-button rounded-lg px-4 py-3 text-sm font-black tracking-[0.12em]">D · 외부요인/SHAP 분석</button>
         </nav>
 
+        <!-- 리포트 다운로드 -->
+        <section class="cab-card mb-3 rounded-lg p-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 class="panel-title mb-0">분석 리포트 다운로드</h2>
+              <p class="mt-1 text-xs text-slate-500">비즈니스 보고서(PDF)와 기술 리포트(Markdown) 두 버전으로 제공됩니다.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button id="reportRegenBtn" class="rounded border border-slate-400 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 disabled:opacity-40">
+                🔄 리포트 재생성
+              </button>
+              <button id="downloadPdfBtn" class="rounded border border-blue-700 bg-blue-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-800 disabled:opacity-40">
+                📄 비즈니스 보고서 (PDF)
+              </button>
+              <button id="downloadMdBtn" class="rounded border border-violet-700 bg-violet-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-800 disabled:opacity-40">
+                📝 기술 리포트 (Markdown)
+              </button>
+            </div>
+          </div>
+          <p id="reportStatusMsg" class="mt-2 hidden text-xs"></p>
+        </section>
+
         <section id="tabA">
         <section class="grid gap-3 xl:grid-cols-[300px_1fr_300px]">
           <aside class="space-y-3">
@@ -445,6 +467,70 @@
         document.getElementById("downloadBtn").addEventListener("click", downloadSelectedCsv);
         document.getElementById("tabBtnA").addEventListener("click", () => setTab("A"));
         document.getElementById("tabBtnD").addEventListener("click", () => setTab("D"));
+        document.getElementById("downloadPdfBtn").addEventListener("click", () => downloadReport("pdf"));
+        document.getElementById("downloadMdBtn").addEventListener("click", () => downloadReport("md"));
+        document.getElementById("reportRegenBtn").addEventListener("click", regenerateReport);
+      }
+
+      const API_BASE = "http://localhost:8000";
+
+      function setReportStatus(msg, isError = false) {
+        const el = document.getElementById("reportStatusMsg");
+        el.textContent = msg;
+        el.className = `mt-2 text-xs ${isError ? "text-red-600" : "text-slate-500"}`;
+        el.classList.remove("hidden");
+        if (!isError) setTimeout(() => el.classList.add("hidden"), 4000);
+      }
+
+      function setReportBtnsDisabled(disabled) {
+        ["downloadPdfBtn", "downloadMdBtn", "reportRegenBtn"].forEach((id) => {
+          document.getElementById(id).disabled = disabled;
+        });
+      }
+
+      async function downloadReport(type) {
+        const url = `${API_BASE}/api/v1/report/download/${type}`;
+        const label = type === "pdf" ? "비즈니스 보고서(PDF)" : "기술 리포트(Markdown)";
+        setReportStatus(`${label} 다운로드 중…`);
+        setReportBtnsDisabled(true);
+        try {
+          const res = await fetch(url);
+          if (!res.ok) {
+            const detail = await res.json().then((d) => d.detail).catch(() => res.statusText);
+            throw new Error(detail);
+          }
+          const blob = await res.blob();
+          const filename = type === "pdf" ? "business_report.pdf" : "technical_report.md";
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(a.href);
+          setReportStatus(`✅ ${label} 다운로드 완료`);
+        } catch (err) {
+          setReportStatus(`❌ 다운로드 실패: ${err.message}`, true);
+        } finally {
+          setReportBtnsDisabled(false);
+        }
+      }
+
+      async function regenerateReport() {
+        setReportStatus("리포트 재생성 중… (수십 초 소요될 수 있습니다)");
+        setReportBtnsDisabled(true);
+        try {
+          const res = await fetch(`${API_BASE}/api/v1/report/regenerate`, { method: "POST" });
+          if (!res.ok) {
+            const detail = await res.json().then((d) => d.detail).catch(() => res.statusText);
+            throw new Error(detail);
+          }
+          setReportStatus("✅ 리포트 재생성 완료. 이제 다운로드하세요.");
+        } catch (err) {
+          setReportStatus(`❌ 재생성 실패: ${err.message}`, true);
+        } finally {
+          setReportBtnsDisabled(false);
+        }
       }
 
       function setTab(tab) {

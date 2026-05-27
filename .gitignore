@@ -1,24 +1,51 @@
-catboost_info/
-__pycache__/
-.ipynb_checkpoints/
+# ─── 환경 변수 / 시크릿 ────────────────────────────────
 .env
-.matplotlib/
-AGENTS.md
-WORKLOG.md
-docs/
+.env.local
+.env.*.local
+*.key
+*.pem
 
-# 모델 바이너리
+# ─── Python ────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# ─── 가상환경 ──────────────────────────────────────────
+venv/
+.venv/
+env/
+
+# ─── 데이터 / 모델 (대용량) ────────────────────────────
+data/raw/
+data/processed/
 models/
+outputs/img/
+outputs/reports/
+.matplotlib/
 
-# 생성된 EDA 출력물
-data/processed/eda_results/
+# ─── IDE ───────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
 
+# ─── Node / Next.js (대시보드) ─────────────────────────
+node_modules/
+.next/
+out/
 # 중복/캐시 파일
 data/processed/ktx_long_with_holiday.csv
 data/processed/holidays_cache.csv
 src/preprocess_catboost.py
 
-# 대시보드
-dashboard/node_modules/
-dashboard/.next/
-dashboard/.env.local
+# ─── 로그 ──────────────────────────────────────────────
+*.log
+logs/
