@@ -53,7 +53,7 @@ VACANT는 세 층으로 문제를 다룹니다.
 - 월별 공실률 예측: 5개 노선
   - 경부선, 호남선, 경전선, 전라선, 동해선
 
-근거: [REPORT_DATA_ANALYSIS_SUMMARY.md](/home/sms/openclaw_file/korail_project/vacant/gyotong/REPORT_DATA_ANALYSIS_SUMMARY.md)
+근거: [REPORT_DATA_ANALYSIS_SUMMARY.md](REPORT_DATA_ANALYSIS_SUMMARY.md)
 
 ## 핵심 분석 결과
 
@@ -67,7 +67,7 @@ VACANT는 세 층으로 문제를 다룹니다.
 - SHAP 분석에서는 전월 공실률, 3개월 이동평균, 코로나기간, 전년 동월 공실률의 영향이 크게 나타났습니다.
 - Prophet은 추세 비교용 기준선으로는 유용하지만 최근 초과수요 구간은 충분히 따라가지 못했습니다.
 
-위 수치는 [REPORT_DATA_ANALYSIS_SUMMARY.md](/home/sms/openclaw_file/korail_project/vacant/gyotong/REPORT_DATA_ANALYSIS_SUMMARY.md)와 현재 저장소 산출물을 바탕으로 정리했습니다.
+위 수치는 [REPORT_DATA_ANALYSIS_SUMMARY.md](REPORT_DATA_ANALYSIS_SUMMARY.md)와 현재 저장소 산출물을 바탕으로 정리했습니다.
 
 ## 대시보드 구성
 
@@ -86,16 +86,16 @@ VACANT는 세 층으로 문제를 다룹니다.
    공휴일, 명절, 코로나기간, 노선별 SHAP 영향도 해석
 
 현재 UI 구현 파일:
-- [dashboard/components/Dashboard.jsx](/home/sms/openclaw_file/korail_project/vacant/gyotong/dashboard/components/Dashboard.jsx)
+- [dashboard/components/Dashboard.jsx](dashboard/components/Dashboard.jsx)
 
 ## 대표 산출물
 
 대표 이미지:
-- [boxplot_season.png](/home/sms/openclaw_file/korail_project/vacant/gyotong/outputs/img/boxplot_season.png)
-- [trend_yearly.png](/home/sms/openclaw_file/korail_project/vacant/gyotong/outputs/img/trend_yearly.png)
-- [month_pred_vs_actual.png](/home/sms/openclaw_file/korail_project/vacant/gyotong/outputs/img/month_pred_vs_actual.png)
-- [part4_prophet_forecast.png](/home/sms/openclaw_file/korail_project/vacant/gyotong/outputs/img/part4_prophet_forecast.png)
-- [shap_summary.png](/home/sms/openclaw_file/korail_project/vacant/gyotong/outputs/img/shap_summary.png)
+- [boxplot_season.png](outputs/img/boxplot_season.png)
+- [trend_yearly.png](outputs/img/trend_yearly.png)
+- [month_pred_vs_actual.png](outputs/img/month_pred_vs_actual.png)
+- [part4_prophet_forecast.png](outputs/img/part4_prophet_forecast.png)
+- [shap_summary.png](outputs/img/shap_summary.png)
 
 주요 CSV 산출물:
 - `data/processed/ktx_long.csv`
@@ -241,4 +241,4 @@ npm run dev -- -p 3001
 
 ## 참고 문서
 
-- [REPORT_DATA_ANALYSIS_SUMMARY.md](/home/sms/openclaw_file/korail_project/vacant/gyotong/REPORT_DATA_ANALYSIS_SUMMARY.md)
+- [REPORT_DATA_ANALYSIS_SUMMARY.md](REPORT_DATA_ANALYSIS_SUMMARY.md)
