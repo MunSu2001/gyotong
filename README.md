@@ -6,7 +6,11 @@ KTX 노선별 공실률을 분석하고, 향후 공실 위험과 초과수요 �
 
 ## 시연 화면
 
-![VACANT 대시보드 시연](assets/demo/dashboard-demo.gif)
+![VACANT 대시보드 시연 1](demo/clip_01s_to_10s.gif)
+
+![VACANT 대시보드 시연 2](demo/clip_11s_to_20s.gif)
+
+![VACANT 대시보드 시연 3](demo/clip_21s_to_30s.gif)
 
 ## 프로젝트 한눈에 보기
 
