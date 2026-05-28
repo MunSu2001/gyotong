@@ -41,6 +41,11 @@ outputs/reports/
 node_modules/
 .next/
 out/
+# 로컬 작업 문서 / 생성 캐시
+AGENTS.md
+WORKLOG.md
+docs/
+notebooks/catboost_info/
 # 중복/캐시 파일
 data/processed/ktx_long_with_holiday.csv
 data/processed/holidays_cache.csv
