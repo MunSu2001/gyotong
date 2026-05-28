@@ -3,15 +3,15 @@
 import { useState } from "react";
 
 /**
- * 리포트 다운로드 버튼 (PDF + Markdown).
+ * 리포트 다운로드 버튼.
  *
- * - PDF: 비즈니스 보고서 (운영자용)
- * - MD : 기술 리포트 (개발자용)
+ * - 월별 레포트: 운영자용 PDF
+ * - 기술 레포트: 개발자용 PDF
  *
  * 백엔드가 죽었거나 리포트 미생성이면 사용자에게 안내 표시.
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
 
 export default function ReportDownloadButtons() {
   const [status, setStatus] = useState({ pdf: "idle", md: "idle" });
@@ -26,10 +26,11 @@ export default function ReportDownloadButtons() {
       const response = await fetch(`${API_BASE}${endpoint}`);
 
       if (!response.ok) {
+        const errorDetail = await readErrorDetail(response);
         if (response.status === 404) {
-          throw new Error("리포트가 아직 생성되지 않았습니다. 먼저 분석을 실행해주세요.");
+          throw new Error(errorDetail || "리포트가 아직 생성되지 않았습니다. 먼저 분석을 실행해주세요.");
         }
-        throw new Error(`서버 오류 (${response.status})`);
+        throw new Error(errorDetail || `서버 오류 (${response.status})`);
       }
 
       const blob = await response.blob();
@@ -60,7 +61,7 @@ export default function ReportDownloadButtons() {
 
   const buttonClass = (state) =>
     [
-      "flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold transition",
+      "flex h-[34px] items-center gap-1.5 rounded-lg border px-3 text-xs font-bold transition",
       state === "loading"
         ? "border-slate-300 bg-slate-100 text-slate-400 cursor-wait"
         : state === "success"
@@ -74,7 +75,7 @@ export default function ReportDownloadButtons() {
     if (state === "loading") return "생성 중...";
     if (state === "success") return "다운로드 완료";
     if (state === "error") return "오류";
-    return kind === "pdf" ? "비즈니스 리포트" : "기술 리포트";
+    return kind === "pdf" ? "월별 레포트" : "기술 레포트";
   };
 
   const renderIcon = (state) => {
@@ -85,34 +86,43 @@ export default function ReportDownloadButtons() {
   };
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className="flex flex-col items-start gap-1">
       <div className="flex gap-2">
         <button
           type="button"
           onClick={() => download("pdf")}
           disabled={status.pdf === "loading"}
           className={buttonClass(status.pdf)}
-          title="비즈니스 리포트 (운영자용 PDF)"
+          title="월별 레포트 다운로드"
         >
-          <span>{renderIcon(status.pdf)}</span>
           <span>{renderLabel("pdf", status.pdf)}</span>
+          <span>{renderIcon(status.pdf)}</span>
         </button>
         <button
           type="button"
           onClick={() => download("md")}
           disabled={status.md === "loading"}
           className={buttonClass(status.md)}
-          title="기술 리포트 (개발자용 PDF)"
+          title="기술 레포트 다운로드"
         >
-          <span>{renderIcon(status.md)}</span>
           <span>{renderLabel("md", status.md)}</span>
+          <span>{renderIcon(status.md)}</span>
         </button>
       </div>
       {errorMessage && (
-        <p className="text-[10px] text-red-600 text-right max-w-[260px]">
+        <p className="max-w-[260px] text-left text-[10px] text-red-600">
           {errorMessage}
         </p>
       )}
     </div>
   );
+}
+
+async function readErrorDetail(response) {
+  try {
+    const payload = await response.json();
+    return payload.detail;
+  } catch {
+    return "";
+  }
 }

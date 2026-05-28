@@ -33,7 +33,7 @@ export default function Dashboard({ data }) {
 
   return (
     <main className="dashboard-shell">
-      <section className="glass-panel rounded-[2rem]">
+      <section className="glass-panel">
         <Header selectedRoute={selectedRoute} setSelectedRoute={setSelectedRoute} routes={routeOptions} />
         <TabBar activeTab={activeTab} setActiveTab={setActiveTab} />
         <section className="screen-content">
@@ -53,32 +53,68 @@ function Header({ selectedRoute, setSelectedRoute, routes }) {
   const date = now.toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" });
 
   return (
-    <header className="screen-statusbar grid grid-cols-[180px_1fr_auto_220px] items-center gap-4 px-8">
-      <div className="flex items-center gap-2 text-xl">
-        <button type="button" className="nav-icon-button" aria-label="뒤로">‹</button>
-        <button type="button" className="nav-icon-button" aria-label="홈">⌂</button>
-        <button type="button" className="nav-icon-button" aria-label="메뉴">≡</button>
+    <header className="screen-statusbar grid grid-cols-[280px_1fr_220px] items-center gap-4 px-8">
+      <div className="justify-self-start">
+        <ReportDownloadButtons />
       </div>
       <div className="text-center">
         <div className="text-3xl font-semibold tabular-nums text-slate-700">{time}</div>
         <div className="mt-1 text-sm font-bold text-slate-500">{date}</div>
       </div>
-      <ReportDownloadButtons />
-      <label className="justify-self-end text-xs font-semibold text-slate-500">
-        <span className="mb-1 block text-right">Route</span>
-        <select
-          value={selectedRoute}
-          onChange={(event) => setSelectedRoute(event.target.value)}
-          className="w-44 rounded-lg border border-slate-200 bg-white px-3 py-2 text-right text-base font-bold text-slate-700 outline-none focus:border-[#72ddb0]"
-        >
-          {["전체", ...routes].map((route) => (
-            <option key={route} value={route}>
-              {route}
-            </option>
-          ))}
-        </select>
-      </label>
+      <RouteDropdown selectedRoute={selectedRoute} setSelectedRoute={setSelectedRoute} routes={routes} />
     </header>
+  );
+}
+
+function RouteDropdown({ selectedRoute, setSelectedRoute, routes }) {
+  const [open, setOpen] = useState(false);
+  const options = ["전체", ...routes];
+
+  const handleBlur = (event) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      setOpen(false);
+    }
+  };
+
+  return (
+    <div className="relative flex items-center gap-2 justify-self-end text-xs font-semibold text-slate-500" onBlur={handleBlur}>
+      <span>Route</span>
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        className="grid h-[34px] w-44 grid-cols-[1fr_auto] items-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 outline-none transition hover:border-slate-300 focus:border-[#72ddb0]"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span className="text-center">{selectedRoute}</span>
+        <span className="text-xs text-slate-400">▾</span>
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full z-30 mt-2 w-44 overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-xl" role="listbox">
+          {options.map((route) => {
+            const active = selectedRoute === route;
+            return (
+              <button
+                key={route}
+                type="button"
+                onClick={() => {
+                  setSelectedRoute(route);
+                  setOpen(false);
+                }}
+                className={[
+                  "flex w-full justify-center px-3 py-2 text-center text-sm font-bold transition",
+                  active ? "bg-[#e5fbf0] text-slate-900" : "text-slate-600 hover:bg-slate-50",
+                ].join(" ")}
+                role="option"
+                aria-selected={active}
+              >
+                {route}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -128,9 +164,9 @@ function Part1({ model }) {
       <aside className="space-y-4">
         <Card title="Route Load">
           <div className="grid gap-3">
-            <Gauge label="선택 역 수" value={model.part1.stationCount} percent={model.part1.stationPercent} />
-            <Gauge label="승차 인원" value={model.part1.boarding} percent={model.part1.boardingPercent} />
-            <Gauge label="하차 인원" value={model.part1.alighting} percent={model.part1.alightingPercent} />
+            <Gauge label="선택 역 수" value={formatNumber(model.part1.stationCount)} percent={model.part1.stationPercent} />
+            <Gauge label="승차 인원" value={formatNumber(model.part1.boarding)} percent={model.part1.boardingPercent} />
+            <Gauge label="하차 인원" value={formatNumber(model.part1.alighting)} percent={model.part1.alightingPercent} />
           </div>
         </Card>
         <Card title="Route Inventory">
@@ -151,9 +187,24 @@ function Part2({ model }) {
         <ScreenTitle eyebrow="Pattern Monitor" title="시간·계절 패턴" desc="월별·계절별 공실률 변화를 확인합니다." compact />
         <Card title="Vacancy State">
           <div className="grid gap-3">
-            <Gauge label="최근 평균 공실률" value={`${formatFixed(model.part2.recentAvg)}%`} percent={bounded(model.part2.recentAvg)} />
-            <Gauge label="초과수요 월" value={`${model.part2.excessMonths}개월`} percent={(model.part2.excessMonths / 12) * 100} />
-            <Gauge label="최저 공실률" value={`${formatFixed(model.part2.minVacancy)}%`} percent={bounded(model.part2.minVacancy)} />
+            <Gauge
+              label="최근 평균 공실률"
+              value={`${formatFixed(model.part2.recentAvg)}%`}
+              percent={bounded(model.part2.recentAvg)}
+              accent={vacancyAccent(model.part2.recentAvg)}
+            />
+            <Gauge
+              label="초과수요 월"
+              value={`${model.part2.excessMonths}개월`}
+              percent={(model.part2.excessMonths / 12) * 100}
+              accent={excessDemandAccent(model.part2.excessMonths)}
+            />
+            <Gauge
+              label="최저 공실률"
+              value={`${formatFixed(model.part2.minVacancy)}%`}
+              percent={bounded(model.part2.minVacancy)}
+              accent={vacancyAccent(model.part2.minVacancy)}
+            />
           </div>
         </Card>
         <Card title="Season Average">
@@ -347,7 +398,7 @@ function ScreenTitle({ eyebrow, title, desc, compact = false }) {
 function Gauge({ label, value, percent, accent = "#0f766e" }) {
   const angle = Math.max(8, Math.min(100, Math.abs(percent || 0)) * 2.7);
   return (
-    <div className="rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-[#f5fbf8] p-3 shadow-sm">
+    <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="font-mono text-xs font-black uppercase tracking-[0.14em] text-slate-500">{label}</p>
@@ -355,7 +406,7 @@ function Gauge({ label, value, percent, accent = "#0f766e" }) {
         </div>
         <div
           className="gauge-ring relative h-20 w-20 shrink-0 rounded-full"
-          style={{ "--gauge-angle": `${angle}deg`, "--accent": accent, "--accent-2": "#72ddb0" }}
+          style={{ "--gauge-angle": `${angle}deg`, "--accent": accent }}
         >
           <div className="absolute inset-0 z-10 flex items-center justify-center pt-4 text-xs font-black text-slate-500">
             {Math.round(Math.abs(percent || 0))}
@@ -717,6 +768,14 @@ function min(rows, key) {
 
 function bounded(value) {
   return Math.max(0, Math.min(100, Number(value || 0)));
+}
+
+function vacancyAccent(value) {
+  return Number(value || 0) < 0 ? "#dc2626" : "#16a34a";
+}
+
+function excessDemandAccent(value) {
+  return Number(value || 0) > 0 ? "#dc2626" : "#16a34a";
 }
 
 function parseNumber(value) {

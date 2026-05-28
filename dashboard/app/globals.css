@@ -17,16 +17,14 @@
 }
 
 html {
-  background: #dfd8cf;
+  background: #f7f8f8;
 }
 
 body {
   min-height: 100vh;
   margin: 0;
   color: var(--ink);
-  background:
-    radial-gradient(circle at 50% -8%, rgba(255, 255, 255, 0.68), transparent 34rem),
-    linear-gradient(180deg, #e9e1d8 0%, #d5cdc5 100%);
+  background: #f7f8f8;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -36,19 +34,19 @@ select {
 }
 
 .dashboard-shell {
-  width: min(1420px, calc(100vw - 32px));
-  margin: 0 auto;
-  padding: 26px 0 32px;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 .glass-panel {
-  min-height: 760px;
+  min-height: 100vh;
   overflow: hidden;
-  border: 10px solid #4b4741;
+  border: 0;
+  border-radius: 0;
   background: #f7f8f8;
-  box-shadow:
-    0 28px 70px rgba(33, 29, 25, 0.28),
-    inset 0 0 0 1px rgba(15, 23, 42, 0.12);
+  box-shadow: none;
 }
 
 .dash-card {
@@ -89,7 +87,7 @@ select {
 }
 
 .gauge-ring {
-  background: conic-gradient(from 225deg, var(--accent) 0deg, var(--accent-2) var(--gauge-angle), #cbd5e1 var(--gauge-angle), #cbd5e1 270deg, transparent 270deg);
+  background: conic-gradient(from 225deg, var(--accent) 0deg, var(--accent) var(--gauge-angle), #cbd5e1 var(--gauge-angle), #cbd5e1 270deg, transparent 270deg);
 }
 
 .gauge-ring::after {
@@ -101,6 +99,8 @@ select {
 }
 
 .screen-statusbar {
+  position: relative;
+  z-index: 30;
   height: 72px;
   border-bottom: 1px solid rgba(15, 23, 42, 0.1);
   background: rgba(255, 255, 255, 0.76);
@@ -113,24 +113,11 @@ select {
 }
 
 .screen-tabbar {
+  position: relative;
+  z-index: 10;
   border-bottom: 1px solid rgba(15, 23, 42, 0.1);
   background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(14px);
-}
-
-.nav-icon-button {
-  display: grid;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  border-radius: 999px;
-  color: #5d636b;
-  transition: background 160ms ease, color 160ms ease;
-}
-
-.nav-icon-button:hover {
-  background: #eef2f3;
-  color: #1f2937;
 }
 
 .thin-scroll::-webkit-scrollbar {
